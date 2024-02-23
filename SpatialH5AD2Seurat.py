@@ -1,6 +1,7 @@
 import scanpy as sc
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import json
 import os
 import h5py
@@ -30,14 +31,14 @@ def write_10X_h5(adata, file):
     # '_all_tag_keys', 'feature_type', 'genome', 'id', 'name', 'pattern', 'read', 'sequence'
     ftrs.create_dataset("feature_type", data=np.array(adata.var.feature_types, dtype=f'|S{str_max(adata.var.feature_types)}'))
     ftrs.create_dataset("genome", data=np.array(adata.var.genome, dtype=f'|S{str_max(adata.var.genome)}'))
-    ftrs.create_dataset("id", data=np.array(adata.var.SYMBOL, dtype=f'|S{str_max(adata.var.SYMBOL)}'))
-    ftrs.create_dataset("name", data=np.array(adata.var.SYMBOL, dtype=f'|S{str_max(adata.var.SYMBOL)}'))
+    ftrs.create_dataset("id", data=np.array(adata.var.SYMBOL, dtype=f'|S{str_max(adata.var.SYMBOL)}')) # This should be modified according the actual Gene SYMBOL column name in adata.var
+    ftrs.create_dataset("name", data=np.array(adata.var.SYMBOL, dtype=f'|S{str_max(adata.var.SYMBOL)}')) # This should be modified according the actual Gene SYMBOL column name in adata.var
     grp.create_dataset("indices", data=np.array(adata.X.indices, dtype=f'<i{int_max(adata.X.indices)}'))
     grp.create_dataset("indptr", data=np.array(adata.X.indptr, dtype=f'<i{int_max(adata.X.indptr)}'))
     grp.create_dataset("shape", data=np.array(list(adata.X.shape)[::-1], dtype=f'<i{int_max(adata.X.shape)}'))
 
 def writeVisium(adata_vis,spName):
-  slide = select_slide(adata_vis,spName)
+  slide = select_slide(adata_vis,spName) # Cited from cell2location, for multi-slices. If you only have one slice, modify this line to ignore this issue. 
   slide=slide.raw.to_adata()
   new_dir = spName
   os.makedirs(new_dir, exist_ok=True)
